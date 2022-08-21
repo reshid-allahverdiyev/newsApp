@@ -20,6 +20,9 @@ public class NewsEntity {
     @Column(name = "body")
     private String body;
 
+//    @Column(name = "typeId")
+//    private String typeId;
+
     @ManyToOne
     @JoinColumn(name="typeId",insertable = false)
     private TypeEntity type;
