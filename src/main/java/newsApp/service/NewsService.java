@@ -1,8 +1,12 @@
 package newsApp.service;
 
+import newsApp.entity.AuthorEntity;
 import newsApp.entity.NewsEntity;
+import newsApp.entity.TypeEntity;
 import newsApp.mapper.ObjectMapper;
+import newsApp.repository.AuthorRepository;
 import newsApp.repository.NewsRepository;
+import newsApp.repository.TypeRepository;
 import newsApp.request.CreateNewsRequest;
 import newsApp.response.GetNewsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,10 @@ public class NewsService {
     private NewsRepository newsRepository;
 
     @Autowired
+    private TypeRepository typeRepository;
+    @Autowired
+    private AuthorRepository authorRepository;
+    @Autowired
     private ObjectMapper objectMapper;
 
     public List<GetNewsResponse> getAllNews(){
@@ -26,12 +34,17 @@ public class NewsService {
                 .collect(Collectors.toList());
     }
     public GetNewsResponse getNewsById(Long id) {
-        return objectMapper.entityToDto(newsRepository.getById(id));
+        GetNewsResponse d=objectMapper.entityToDto(newsRepository.getById(id));
+        return  d;
     }
 
 
     public GetNewsResponse createNews(CreateNewsRequest request) {
-        NewsEntity entity = objectMapper.dtoToEntity(request);
+        NewsEntity entity = new NewsEntity();
+        entity.setTitle(request.getTitle());
+        entity.setBody(request.getBody());
+        entity.setAuthorEntities(authorRepository.findAllByIdIn(request.getAuthorIds()));
+        entity.setType(typeRepository.getById(request.getTypeId()));
         return objectMapper.entityToDto(newsRepository.save(entity));
     }
 
@@ -42,7 +55,7 @@ public class NewsService {
 
         entity.setTitle(request.getTitle());
         entity.setBody(request.getBody());
-        //entity.setTypeId(request.getTypeId());
+        entity.setType(typeRepository.getById(request.getTypeId()));
         return objectMapper.entityToDto(newsRepository.save(entity));
     }
 

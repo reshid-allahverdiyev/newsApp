@@ -4,11 +4,13 @@ package newsApp.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Data
 @Table(name = "news")
-public class NewsEntity {
+public class NewsEntity  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -20,10 +22,11 @@ public class NewsEntity {
     @Column(name = "body")
     private String body;
 
-
-
     @ManyToOne
     @JoinColumn(name="typeId",insertable = false)
     private TypeEntity type;
+
+    @ManyToMany//(mappedBy = "newsEntities")
+    List<AuthorEntity>  authorEntities;
 
 }
