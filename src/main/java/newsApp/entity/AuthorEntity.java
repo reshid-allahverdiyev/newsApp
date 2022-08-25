@@ -22,5 +22,5 @@ public class AuthorEntity implements Serializable {
     private String surname;
 
     @ManyToMany
-    List<NewsEntity>  newsEntities;
+    private List<NewsEntity>  newsEntities;
 }

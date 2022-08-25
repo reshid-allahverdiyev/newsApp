@@ -7,8 +7,12 @@ import newsApp.mapper.ObjectMapper;
 import newsApp.repository.AuthorRepository;
 import newsApp.repository.NewsRepository;
 import newsApp.repository.TypeRepository;
+import newsApp.repository.view.NewsView;
 import newsApp.request.CreateNewsRequest;
+import newsApp.request.SearchNewsRequest;
+import newsApp.request.searchQuery.SearchQueries;
 import newsApp.response.GetNewsResponse;
+import newsApp.response.GetOneNewsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,10 +37,24 @@ public class NewsService {
                 .map(objectMapper::entityToDto)
                 .collect(Collectors.toList());
     }
-    public GetNewsResponse getNewsById(Long id) {
-        GetNewsResponse d=objectMapper.entityToDto(newsRepository.getById(id));
-        return  d;
+
+    public List<GetNewsResponse> getAllNewsWithCriteria(SearchNewsRequest request){
+        return newsRepository.findAll(SearchQueries.createStudentSpecification(request)).stream()
+                .map(objectMapper::entityToDto)
+                .collect(Collectors.toList());
     }
+
+
+
+    public GetNewsResponse getNewsById(Long id) {
+        return  objectMapper.entityToDto(newsRepository.getById(id));
+    }
+
+    public GetOneNewsResponse getOneNewsById(Long id) {
+        return  objectMapper.entityToDto(newsRepository.findById(id,NewsView.class));
+    }
+
+
 
 
     public GetNewsResponse createNews(CreateNewsRequest request) {
@@ -56,6 +74,7 @@ public class NewsService {
         entity.setTitle(request.getTitle());
         entity.setBody(request.getBody());
         entity.setType(typeRepository.getById(request.getTypeId()));
+        entity.setAuthorEntities(authorRepository.findAllByIdIn(request.getAuthorIds()));
         return objectMapper.entityToDto(newsRepository.save(entity));
     }
 

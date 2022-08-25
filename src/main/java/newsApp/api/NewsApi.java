@@ -2,7 +2,9 @@ package newsApp.api;
 
 import newsApp.entity.NewsEntity;
 import newsApp.request.CreateNewsRequest;
+import newsApp.request.SearchNewsRequest;
 import newsApp.response.GetNewsResponse;
+import newsApp.response.GetOneNewsResponse;
 import newsApp.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +23,27 @@ public class NewsApi {
         return newsService.getAllNews();
     }
 
+    @GetMapping("/allcriteria")
+    public List<GetNewsResponse> getAllNewsWithCriteria(
+            @RequestBody SearchNewsRequest request
+    ) {
+        return newsService.getAllNewsWithCriteria(request);
+    }
+
+
+
     @GetMapping("/{id}")
     public GetNewsResponse getNewsById(
             @PathVariable("id") Long id
     ) {
         return newsService.getNewsById(id);
+    }
+
+    @GetMapping("/one/{id}")
+    public GetOneNewsResponse getOneNewsById(
+            @PathVariable("id") Long id
+    ) {
+        return newsService.getOneNewsById(id);
     }
 
     @PostMapping("/create")

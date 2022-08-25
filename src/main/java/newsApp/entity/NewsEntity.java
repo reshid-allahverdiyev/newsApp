@@ -26,7 +26,7 @@ public class NewsEntity  implements Serializable {
     @JoinColumn(name="typeId",insertable = false)
     private TypeEntity type;
 
-    @ManyToMany//(mappedBy = "newsEntities")
-    List<AuthorEntity>  authorEntities;
+    @ManyToMany(mappedBy = "newsEntities")
+    private List<AuthorEntity>  authorEntities;
 
 }

@@ -3,11 +3,13 @@ package newsApp.mapper;
 import newsApp.entity.AuthorEntity;
 import newsApp.entity.NewsEntity;
 import newsApp.entity.TypeEntity;
+import newsApp.repository.view.NewsView;
 import newsApp.request.CreateAuthorRequest;
 import newsApp.request.CreateNewsRequest;
 import newsApp.request.CreateTypeRequest;
 import newsApp.response.GetAuthorResponse;
 import newsApp.response.GetNewsResponse;
+import newsApp.response.GetOneNewsResponse;
 import newsApp.response.GetTypeResponse;
 import org.aspectj.weaver.ConcreteTypeMunger;
 import org.mapstruct.Mapper;
@@ -23,4 +25,8 @@ public abstract class ObjectMapper {
     public abstract GetAuthorResponse entityToDto(AuthorEntity  entity);
 
     public abstract AuthorEntity dtoToEntity(CreateAuthorRequest request);
+
+
+    public abstract GetOneNewsResponse entityToDto(NewsView entity);
+
 }
