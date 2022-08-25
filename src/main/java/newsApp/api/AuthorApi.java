@@ -1,6 +1,7 @@
 package newsApp.api;
 
 import newsApp.request.CreateAuthorRequest;
+import newsApp.response.GeneralResponse;
 import newsApp.response.GetAuthorResponse;
 import newsApp.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,19 +16,19 @@ public class AuthorApi {
 
 
     @GetMapping("/all")
-    public List<GetAuthorResponse> getAllAuthor() {
+    public GeneralResponse getAllAuthor() {
         return authorService.getAllAuthor();
     }
 
     @GetMapping("/{id}")
-    public GetAuthorResponse getAuthorById(
+    public GeneralResponse getAuthorById(
             @PathVariable("id") Long id
     ) {
         return authorService.getAuthorById(id);
     }
 
     @PostMapping("/create")
-    public GetAuthorResponse createAuthor(
+    public GeneralResponse createAuthor(
             @RequestBody CreateAuthorRequest request
     ) {
         return authorService.createAuthor(request);
@@ -36,7 +37,7 @@ public class AuthorApi {
 
 
     @PutMapping("/update/{id}")
-    public GetAuthorResponse updateAuthor(
+    public GeneralResponse updateAuthor(
             @RequestBody CreateAuthorRequest request,
             @PathVariable Long id
     ) {

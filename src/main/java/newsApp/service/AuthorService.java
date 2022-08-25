@@ -4,6 +4,7 @@ import newsApp.entity.AuthorEntity;
 import newsApp.mapper.ObjectMapper;
 import newsApp.repository.AuthorRepository;
 import newsApp.request.CreateAuthorRequest;
+import newsApp.response.GeneralResponse;
 import newsApp.response.GetAuthorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,28 +20,38 @@ public class AuthorService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public List<GetAuthorResponse> getAllAuthor (){
-        return authorRepository.findAll().stream()
+    public GeneralResponse getAllAuthor (){
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(authorRepository.findAll().stream()
                 .map(objectMapper::entityToDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        return generalResponse;
+
     }
-    public GetAuthorResponse getAuthorById(Long id) {
-        return objectMapper.entityToDto(authorRepository.getById(id));
+    public GeneralResponse getAuthorById(Long id) {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(authorRepository.getById(id)));
+        return generalResponse;
     }
 
 
-    public GetAuthorResponse createAuthor(CreateAuthorRequest request) {
+    public GeneralResponse createAuthor(CreateAuthorRequest request) {
         AuthorEntity entity = objectMapper.dtoToEntity(request);
-        return objectMapper.entityToDto(authorRepository.save(entity));
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(authorRepository.save(entity)));
+        return generalResponse;
     }
 
 
-    public GetAuthorResponse updateAuthor(CreateAuthorRequest request, Long id) {
+    public GeneralResponse updateAuthor(CreateAuthorRequest request, Long id) {
         AuthorEntity entity =
                 authorRepository.findById(id).orElseThrow(NullPointerException::new);
 
         entity.setName(request.getName());
         entity.setSurname(request.getSurname());
-        return objectMapper.entityToDto(authorRepository.save(entity));
+
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(authorRepository.save(entity)));
+        return generalResponse;
     }
 }

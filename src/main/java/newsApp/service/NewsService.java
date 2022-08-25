@@ -11,9 +11,13 @@ import newsApp.repository.view.NewsView;
 import newsApp.request.CreateNewsRequest;
 import newsApp.request.SearchNewsRequest;
 import newsApp.request.searchQuery.SearchQueries;
+import newsApp.response.GeneralResponse;
+import newsApp.response.GetNewsPagebleResponse;
 import newsApp.response.GetNewsResponse;
 import newsApp.response.GetOneNewsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,42 +36,70 @@ public class NewsService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public List<GetNewsResponse> getAllNews(){
-        return newsRepository.findAll().stream()
+    public GeneralResponse getAllNews() {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(
+                newsRepository.findAll().stream()
                 .map(objectMapper::entityToDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        return generalResponse;
     }
 
-    public List<GetNewsResponse> getAllNewsWithCriteria(SearchNewsRequest request){
-        return newsRepository.findAll(SearchQueries.createStudentSpecification(request)).stream()
+    public GeneralResponse getAllNewsWithCriteria(SearchNewsRequest request) {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(
+                newsRepository.findAll(SearchQueries.createStudentSpecification(request)).stream()
+                        .map(objectMapper::entityToDto)
+                        .collect(Collectors.toList()));
+        return generalResponse;
+    }
+
+    public GeneralResponse getAllNewsWithCriteriaAndPage(SearchNewsRequest request, int page, int size) {
+        GetNewsPagebleResponse response = new GetNewsPagebleResponse();
+        Page<NewsEntity> newsEntityPage = newsRepository
+                .findAll(
+                        SearchQueries.createStudentSpecification(request),
+                        PageRequest.of(page, size));
+        response.setNewsList(newsEntityPage.getContent().stream()
                 .map(objectMapper::entityToDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        response.setTotalPages(newsEntityPage.getTotalPages());
+        response.setTotalElements(newsEntityPage.getTotalElements());
+
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(response);
+        return generalResponse;
     }
 
 
-
-    public GetNewsResponse getNewsById(Long id) {
-        return  objectMapper.entityToDto(newsRepository.getById(id));
+    public GeneralResponse getNewsById(Long id) {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(newsRepository.getById(id)));
+        return generalResponse;
     }
 
-    public GetOneNewsResponse getOneNewsById(Long id) {
-        return  objectMapper.entityToDto(newsRepository.findById(id,NewsView.class));
+    public GeneralResponse getOneNewsById(Long id) {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(newsRepository.findById(id, NewsView.class)));
+        return generalResponse;
     }
 
 
-
-
-    public GetNewsResponse createNews(CreateNewsRequest request) {
+    public GeneralResponse createNews(CreateNewsRequest request) {
         NewsEntity entity = new NewsEntity();
         entity.setTitle(request.getTitle());
         entity.setBody(request.getBody());
         entity.setAuthorEntities(authorRepository.findAllByIdIn(request.getAuthorIds()));
         entity.setType(typeRepository.getById(request.getTypeId()));
-        return objectMapper.entityToDto(newsRepository.save(entity));
+
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(newsRepository.save(entity)));
+        return generalResponse;
+
     }
 
 
-    public GetNewsResponse updateNews(CreateNewsRequest request, Long id) {
+    public GeneralResponse updateNews(CreateNewsRequest request, Long id) {
         NewsEntity entity =
                 newsRepository.findById(id).orElseThrow(NullPointerException::new);
 
@@ -75,7 +107,10 @@ public class NewsService {
         entity.setBody(request.getBody());
         entity.setType(typeRepository.getById(request.getTypeId()));
         entity.setAuthorEntities(authorRepository.findAllByIdIn(request.getAuthorIds()));
-        return objectMapper.entityToDto(newsRepository.save(entity));
+
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(newsRepository.save(entity)));
+        return generalResponse;
     }
 
 }

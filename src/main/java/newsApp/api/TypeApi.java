@@ -1,6 +1,7 @@
 package newsApp.api;
 
 import newsApp.request.CreateTypeRequest;
+import newsApp.response.GeneralResponse;
 import newsApp.response.GetTypeResponse;
 import newsApp.service.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +17,19 @@ public class TypeApi {
 
 
     @GetMapping("/all")
-    public List<GetTypeResponse> getAllType() {
+    public GeneralResponse getAllType() {
         return typeService.getAllType();
     }
 
     @GetMapping("/{id}")
-    public GetTypeResponse getTypeById(
+    public GeneralResponse getTypeById(
             @PathVariable("id") Long id
     ) {
         return typeService.getTypeById(id);
     }
 
     @PostMapping("/create")
-    public GetTypeResponse createType(
+    public GeneralResponse createType(
             @RequestBody CreateTypeRequest request
     ) {
         return typeService.createType(request);
@@ -37,7 +38,7 @@ public class TypeApi {
 
 
     @PutMapping("/update/{id}")
-    public GetTypeResponse updateType(
+    public GeneralResponse updateType(
             @RequestBody CreateTypeRequest request,
             @PathVariable Long id
     ) {

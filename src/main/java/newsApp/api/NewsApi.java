@@ -3,6 +3,8 @@ package newsApp.api;
 import newsApp.entity.NewsEntity;
 import newsApp.request.CreateNewsRequest;
 import newsApp.request.SearchNewsRequest;
+import newsApp.response.GeneralResponse;
+import newsApp.response.GetNewsPagebleResponse;
 import newsApp.response.GetNewsResponse;
 import newsApp.response.GetOneNewsResponse;
 import newsApp.service.NewsService;
@@ -19,35 +21,50 @@ public class NewsApi {
 
 
     @GetMapping("/all")
-    public List<GetNewsResponse> getAllNews() {
-        return newsService.getAllNews();
+    public GeneralResponse getAllNews() {
+        return  newsService.getAllNews();
     }
 
+
+
+
+
+
     @GetMapping("/allcriteria")
-    public List<GetNewsResponse> getAllNewsWithCriteria(
+    public GeneralResponse getAllNewsWithCriteria(
             @RequestBody SearchNewsRequest request
     ) {
         return newsService.getAllNewsWithCriteria(request);
     }
 
+    @GetMapping("/allcriteriapage")
+    public GeneralResponse getAllNewsWithCriteriaAndPage(
+            @RequestBody SearchNewsRequest request,
+            @RequestParam(value = "page",required = false,defaultValue = "0") int page,
+            @RequestParam(value = "size",required = false,defaultValue = "3") int size
+
+    ) {
+        return newsService.getAllNewsWithCriteriaAndPage(request,page,size);
+    }
+
 
 
     @GetMapping("/{id}")
-    public GetNewsResponse getNewsById(
+    public GeneralResponse getNewsById(
             @PathVariable("id") Long id
     ) {
         return newsService.getNewsById(id);
     }
 
     @GetMapping("/one/{id}")
-    public GetOneNewsResponse getOneNewsById(
+    public GeneralResponse getOneNewsById(
             @PathVariable("id") Long id
     ) {
         return newsService.getOneNewsById(id);
     }
 
     @PostMapping("/create")
-    public GetNewsResponse createCourse(
+    public GeneralResponse createCourse(
             @RequestBody CreateNewsRequest request
     ) {
         return newsService.createNews(request);
@@ -56,7 +73,7 @@ public class NewsApi {
 
 
     @PutMapping("/update/{id}")
-    public GetNewsResponse updateNews(
+    public GeneralResponse updateNews(
             @RequestBody CreateNewsRequest request,
             @PathVariable Long id
     ) {

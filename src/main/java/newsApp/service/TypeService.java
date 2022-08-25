@@ -4,6 +4,7 @@ import newsApp.entity.TypeEntity;
 import newsApp.mapper.ObjectMapper;
 import newsApp.repository.TypeRepository;
 import newsApp.request.CreateTypeRequest;
+import newsApp.response.GeneralResponse;
 import newsApp.response.GetTypeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,28 +20,36 @@ public class TypeService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public List<GetTypeResponse> getAllType() {
-        return typeRepository.findAll().stream()
+    public GeneralResponse getAllType() {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(typeRepository.findAll().stream()
                 .map(objectMapper::entityToDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        return generalResponse;
     }
 
-    public GetTypeResponse getTypeById(Long id) {
-        return objectMapper.entityToDto(typeRepository.getById(id));
+    public GeneralResponse getTypeById(Long id) {
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(typeRepository.getById(id)));
+        return generalResponse;
     }
 
 
-    public GetTypeResponse createType(CreateTypeRequest request) {
+    public GeneralResponse createType(CreateTypeRequest request) {
         TypeEntity entity = objectMapper.dtoToEntity(request);
-        return objectMapper.entityToDto(typeRepository.save(entity));
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(typeRepository.save(entity)));
+        return generalResponse;
     }
 
 
-    public GetTypeResponse updateType(CreateTypeRequest request, Long id) {
+    public GeneralResponse updateType(CreateTypeRequest request, Long id) {
         TypeEntity entity =
                 typeRepository.findById(id).orElseThrow(NullPointerException::new);
 
         entity.setName(request.getName());
-        return objectMapper.entityToDto(typeRepository.save(entity));
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(typeRepository.save(entity)));
+        return generalResponse;
     }
 }
