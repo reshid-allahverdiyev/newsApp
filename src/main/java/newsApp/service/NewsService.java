@@ -1,26 +1,21 @@
 package newsApp.service;
 
-import newsApp.entity.AuthorEntity;
 import newsApp.entity.NewsEntity;
-import newsApp.entity.TypeEntity;
 import newsApp.mapper.ObjectMapper;
-import newsApp.repository.AuthorRepository;
-import newsApp.repository.NewsRepository;
-import newsApp.repository.TypeRepository;
+import newsApp.repository.mysql.AuthorRepository;
+import newsApp.repository.mysql.NewsRepository;
+import newsApp.repository.mysql.TypeRepository;
 import newsApp.repository.view.NewsView;
 import newsApp.request.CreateNewsRequest;
 import newsApp.request.SearchNewsRequest;
 import newsApp.request.searchQuery.SearchQueries;
 import newsApp.response.GeneralResponse;
 import newsApp.response.GetNewsPagebleResponse;
-import newsApp.response.GetNewsResponse;
-import newsApp.response.GetOneNewsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service

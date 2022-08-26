@@ -2,14 +2,12 @@ package newsApp.service;
 
 import newsApp.entity.AuthorEntity;
 import newsApp.mapper.ObjectMapper;
-import newsApp.repository.AuthorRepository;
+import newsApp.repository.mysql.AuthorRepository;
 import newsApp.request.CreateAuthorRequest;
 import newsApp.response.GeneralResponse;
-import newsApp.response.GetAuthorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service

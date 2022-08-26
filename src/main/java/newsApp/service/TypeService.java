@@ -2,14 +2,12 @@ package newsApp.service;
 
 import newsApp.entity.TypeEntity;
 import newsApp.mapper.ObjectMapper;
-import newsApp.repository.TypeRepository;
+import newsApp.repository.mysql.TypeRepository;
 import newsApp.request.CreateTypeRequest;
 import newsApp.response.GeneralResponse;
-import newsApp.response.GetTypeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service

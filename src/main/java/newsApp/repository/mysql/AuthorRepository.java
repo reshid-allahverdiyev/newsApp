@@ -1,4 +1,4 @@
-package newsApp.repository;
+package newsApp.repository.mysql;
 
 import newsApp.entity.AuthorEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

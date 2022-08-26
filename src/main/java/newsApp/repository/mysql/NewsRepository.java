@@ -1,4 +1,4 @@
-package newsApp.repository;
+package newsApp.repository.mysql;
 
 import newsApp.entity.NewsEntity;
 import newsApp.repository.view.NewsView;

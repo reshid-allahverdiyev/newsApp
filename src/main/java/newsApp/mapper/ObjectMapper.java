@@ -1,17 +1,11 @@
 package newsApp.mapper;
 
-import newsApp.entity.AuthorEntity;
-import newsApp.entity.NewsEntity;
-import newsApp.entity.TypeEntity;
+import newsApp.entity.*;
 import newsApp.repository.view.NewsView;
 import newsApp.request.CreateAuthorRequest;
 import newsApp.request.CreateNewsRequest;
 import newsApp.request.CreateTypeRequest;
-import newsApp.response.GetAuthorResponse;
-import newsApp.response.GetNewsResponse;
-import newsApp.response.GetOneNewsResponse;
-import newsApp.response.GetTypeResponse;
-import org.aspectj.weaver.ConcreteTypeMunger;
+import newsApp.response.*;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -28,5 +22,8 @@ public abstract class ObjectMapper {
 
 
     public abstract GetOneNewsResponse entityToDto(NewsView entity);
+
+    public abstract TokenEntity authResponseToCache(AuthResponse authResponse);
+    public abstract TokenEntityRedis authResponseToCache2(AuthResponse authResponse);
 
 }
