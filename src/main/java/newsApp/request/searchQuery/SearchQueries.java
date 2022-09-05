@@ -12,3 +12,28 @@ public interface SearchQueries {
         return new NewsSpecification(request);
     }
 }
+
+
+
+// Projection +
+// JDBC+
+// Criteria+
+
+// Security +
+// JWT +
+// Redis +
+
+// AOP Aspect Oriented Programming+
+// Exception+
+// Write logs to file+
+
+// Localization
+// Auditable
+// Schedule
+// Statemachine
+
+
+// Docker
+// Test App
+// Cacheing
+// Batch
