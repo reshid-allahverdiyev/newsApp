@@ -1,6 +1,8 @@
 package newsApp.aspect;
 
+import newsApp.constraints.Status;
 import newsApp.response.ErrorResponse;
+import newsApp.util.Translator;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,7 +18,7 @@ public class GlobalExceptionHandler {
     public ErrorResponse dataNotFound(Exception exception){
         return ErrorResponse.builder()
                 .localDateTime(LocalDateTime.now())
-               // .status(Translator.toLocale(Status.ERROR.getMessage()))
+                .status(Translator.toLocale(Status.ERROR.getMessage()))
                 .build();
     }
 }

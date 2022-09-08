@@ -1,5 +1,9 @@
 package newsApp.service;
 
+import newsApp.aspect.EventNotAcceptableException;
+import newsApp.config.statemachine.NewsEvent;
+import newsApp.config.statemachine.NewsState;
+import newsApp.config.statemachine.NewsStateChangeInterceptor;
 import newsApp.entity.NewsEntity;
 import newsApp.mapper.ObjectMapper;
 import newsApp.repository.mysql.AuthorRepository;
@@ -14,6 +18,11 @@ import newsApp.response.GetNewsPagebleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.config.StateMachineFactory;
+import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -30,6 +39,12 @@ public class NewsService {
     private AuthorRepository authorRepository;
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private StateMachineFactory<NewsState, NewsEvent> newsStateMachineFactory;
+
+    @Autowired
+    private NewsStateChangeInterceptor newsStateChangeInterceptor;
 
     public GeneralResponse getAllNews() {
         GeneralResponse generalResponse = new GeneralResponse();
@@ -73,11 +88,57 @@ public class NewsService {
         return generalResponse;
     }
 
+    public GeneralResponse getNewsByIdReview(Long id) {
+
+
+        StateMachine<NewsState, NewsEvent> sm = build(id);
+        sendEvent(id,sm,NewsEvent.REJECT);
+
+        GeneralResponse generalResponse = new GeneralResponse();
+        generalResponse.setData(objectMapper.entityToDto(newsRepository.findById(id).get()));
+        return generalResponse;
+    }
+
+    private void sendEvent(Long blogId, StateMachine<NewsState, NewsEvent> sm, NewsEvent event) {
+        Message<NewsEvent> msg = MessageBuilder.withPayload(event)
+                .setHeader("blog_id", blogId)
+                .setHeader("a","abc")
+                .build();
+        if (!sm.sendEvent(msg)) {
+            throw new EventNotAcceptableException();
+        }
+    }
+
+    private StateMachine<NewsState, NewsEvent> build(Long blogId) {
+        NewsEntity news = newsRepository.findById(blogId).get();
+
+        StateMachine<NewsState, NewsEvent> sm = newsStateMachineFactory.getStateMachine(Long.toString(blogId));
+
+        sm.stop();
+
+        sm.getStateMachineAccessor()
+                .doWithAllRegions(sma -> {
+                    sma.addStateMachineInterceptor(newsStateChangeInterceptor);
+                    sma.resetStateMachine(new DefaultStateMachineContext<>(news.getState(), null, null, null));
+                });
+
+        sm.start();
+
+        return sm;
+    }
+
+
+
+
+
+
     public GeneralResponse getOneNewsById(Long id) {
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse.setData(objectMapper.entityToDto(newsRepository.findById(id, NewsView.class)));
         return generalResponse;
     }
+
+
 
 
     public GeneralResponse createNews(CreateNewsRequest request) {

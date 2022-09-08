@@ -56,6 +56,15 @@ public class NewsApi {
         return newsService.getNewsById(id);
     }
 
+    @GetMapping("/review/{id}")
+    public GeneralResponse getNewsByIdReview(
+            @PathVariable("id") Long id
+    ) {
+        return newsService.getNewsByIdReview(id);
+    }
+
+
+
     @GetMapping("/one/{id}")
     public GeneralResponse getOneNewsById(
             @PathVariable("id") Long id
