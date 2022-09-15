@@ -19,6 +19,8 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
+  cache:
+    type:  redis
 
 server:
   port: 8081

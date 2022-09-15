@@ -1,33 +1,53 @@
 package newsApp.api;
 
-import newsApp.entity.NewsEntity;
+import newsApp.repository.mysql.NewsRepository;
 import newsApp.request.CreateNewsRequest;
 import newsApp.request.SearchNewsRequest;
 import newsApp.response.GeneralResponse;
-import newsApp.response.GetNewsPagebleResponse;
 import newsApp.response.GetNewsResponse;
-import newsApp.response.GetOneNewsResponse;
 import newsApp.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/news")
+@EnableCaching
 public class NewsApi {
     @Autowired
     private NewsService  newsService;
 
 
+    @Autowired
+    private NewsRepository newsRepository;
+
     @GetMapping("/all")
-    public GeneralResponse getAllNews() {
+    public GeneralResponse  getAllNews() {
         return  newsService.getAllNews();
     }
 
+    @GetMapping("/allc")
+    @Cacheable("test")
+    public GeneralResponse  getAllNewsCache()  throws  Exception{
+        Thread.sleep(4000);
+        return  newsService.getAllNews();
+    }
 
+    @GetMapping("/allcl")
+    @CacheEvict(value = "test", allEntries = true)
+    public void   getAllNewsCleanCache() {
+    }
 
-
+    @GetMapping("/allu")
+    @CachePut(value = "test")
+    public GeneralResponse  getAllNewsUpdateCache() {
+        return  newsService.getAllNews();
+    }
 
 
     @GetMapping("/allcriteria")

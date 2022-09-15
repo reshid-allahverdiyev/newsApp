@@ -15,7 +15,10 @@ import newsApp.request.SearchNewsRequest;
 import newsApp.request.searchQuery.SearchQueries;
 import newsApp.response.GeneralResponse;
 import newsApp.response.GetNewsPagebleResponse;
+import newsApp.response.GetNewsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.Message;
@@ -25,6 +28,7 @@ import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +50,10 @@ public class NewsService {
     @Autowired
     private NewsStateChangeInterceptor newsStateChangeInterceptor;
 
-    public GeneralResponse getAllNews() {
+
+
+
+    public GeneralResponse getAllNews(){
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse.setData(
                 newsRepository.findAll().stream()
@@ -54,6 +61,15 @@ public class NewsService {
                 .collect(Collectors.toList()));
         return generalResponse;
     }
+
+
+    public List<GetNewsResponse> getAllNews1(){
+
+           return  newsRepository.findAll().stream()
+                        .map(objectMapper::entityToDto)
+                        .collect(Collectors.toList());
+    }
+
 
     public GeneralResponse getAllNewsWithCriteria(SearchNewsRequest request) {
         GeneralResponse generalResponse = new GeneralResponse();

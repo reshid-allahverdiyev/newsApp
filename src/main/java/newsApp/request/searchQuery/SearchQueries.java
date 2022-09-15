@@ -29,11 +29,10 @@ public interface SearchQueries {
 
 // Localization+
 // Auditable+
-// Schedule
+// Schedule+
 // Statemachine+
 
-
+// Cacheing+
+// Batch
 // Docker
 // Test App
-// Cacheing
-// Batch
