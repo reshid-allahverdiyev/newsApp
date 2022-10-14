@@ -7,7 +7,8 @@ public class SecurityUtil {
     protected static final List<String> WHITE_LIST = List.of(
             "/ping",
             "/login",
-            "/logout/**"
+            "/logout/**",
+            "/news/allu"
     );
 
     public static boolean pathIsWhiteListed(String path){

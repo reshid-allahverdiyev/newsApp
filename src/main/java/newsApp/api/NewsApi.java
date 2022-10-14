@@ -6,6 +6,14 @@ import newsApp.request.SearchNewsRequest;
 import newsApp.response.GeneralResponse;
 import newsApp.response.GetNewsResponse;
 import newsApp.service.NewsService;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -19,34 +27,43 @@ import java.util.List;
 @RequestMapping("/news")
 @EnableCaching
 public class NewsApi {
+
+
     @Autowired
-    private NewsService  newsService;
+    JobLauncher jobLauncher;
+
+    @Autowired
+    Job processJob;
+    @Autowired
+    private NewsService newsService;
 
 
     @Autowired
     private NewsRepository newsRepository;
 
     @GetMapping("/all")
-    public GeneralResponse  getAllNews() {
-        return  newsService.getAllNews();
+    public GeneralResponse getAllNews() {
+        return newsService.getAllNews();
     }
 
     @GetMapping("/allc")
     @Cacheable("test")
-    public GeneralResponse  getAllNewsCache()  throws  Exception{
-        Thread.sleep(4000);
-        return  newsService.getAllNews();
+    public GeneralResponse getAllNewsCache() throws Exception {
+        return newsService.getAllNews();
     }
 
     @GetMapping("/allcl")
     @CacheEvict(value = "test", allEntries = true)
-    public void   getAllNewsCleanCache() {
+    public void getAllNewsCleanCache() {
     }
 
     @GetMapping("/allu")
     @CachePut(value = "test")
-    public GeneralResponse  getAllNewsUpdateCache() {
-        return  newsService.getAllNews();
+    public GeneralResponse getAllNewsUpdateCache() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+        jobLauncher.run(processJob, jobParameters);
+        return newsService.getAllNews();
     }
 
 
@@ -60,13 +77,12 @@ public class NewsApi {
     @GetMapping("/allcriteriapage")
     public GeneralResponse getAllNewsWithCriteriaAndPage(
             @RequestBody SearchNewsRequest request,
-            @RequestParam(value = "page",required = false,defaultValue = "0") int page,
-            @RequestParam(value = "size",required = false,defaultValue = "3") int size
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "3") int size
 
     ) {
-        return newsService.getAllNewsWithCriteriaAndPage(request,page,size);
+        return newsService.getAllNewsWithCriteriaAndPage(request, page, size);
     }
-
 
 
     @GetMapping("/{id}")
@@ -84,7 +100,6 @@ public class NewsApi {
     }
 
 
-
     @GetMapping("/one/{id}")
     public GeneralResponse getOneNewsById(
             @PathVariable("id") Long id
@@ -98,7 +113,6 @@ public class NewsApi {
     ) {
         return newsService.createNews(request);
     }
-
 
 
     @PutMapping("/update/{id}")
